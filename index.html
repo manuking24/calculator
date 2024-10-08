@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Calculators</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+            border: 2px solid #0056b3;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .btn-group-custom .btn {
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+
+        .calculator-section {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        p.result {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #e74c3c;
+        }
+
+        p.result:hover {
+            color: #c0392b;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            margin-top: auto; /* Pushes the footer to the bottom */
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1>Calculators</h1>
+
+    <!-- Button Group -->
+    <div class="d-flex justify-content-center mb-4 btn-group-custom">
+        <button class="btn btn-custom" onclick="showRevolutionCalculator()">Revolution Calculator</button>
+        <button class="btn btn-custom" onclick="showStitchLengthCalculator()">Stitch Length Calculator</button>
+    </div>
+
+    <!-- Revolution Calculator Section -->
+    <div id="revolutionCalculator" class="calculator-section">
+        <h2>Revolution Calculator</h2>
+
+        <!-- Dropdown to select Wesco or Other -->
+        <div class="mb-3">
+            <label for="machineType" class="form-label"><b>Select wesco or other</b></label>
+            <select id="machineType" class="form-select">
+                <option value="wesco">Wesco</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <!-- Wesco input, hidden initially -->
+        <div id="wescoInput" class="mb-3 d-none">
+            <label for="wesco" class="form-label">Wesco</label>
+            <input type="number" class="form-control" id="wesco" required>
+        </div>
+		<div class="mb-3">
+            <label for="kg" class="form-label">Kg</label>
+            <input type="number" class="form-control" id="kg" required>
+        </div>
+        <div class="mb-3">
+            <label for="count" class="form-label">Count</label>
+            <input type="number" class="form-control" id="count" required>
+        </div>
+        <!-- Inputs for Number of Needles and Stitch Length, hidden initially -->
+        <div id="needleStitchInput" class="d-none">
+            <div class="mb-3">
+                <label for="needle" class="form-label">Needle Number</label>
+                <input type="number" class="form-control" id="needle">
+            </div>
+            <div class="mb-3">
+                <label for="stitch" class="form-label">Stitch Length (cm)</label>
+                <input type="number" class="form-control" id="stitch">
+            </div>
+        </div>
+
+        <!-- Common inputs for both machine types -->
+        
+        <div class="mb-3">
+            <label for="feeder" class="form-label">Feeder Number</label>
+            <input type="number" class="form-control" id="feeder" required>
+        </div>
+
+        <button class="btn btn-custom" onclick="calculateRevolution()">Calculate Revolution</button>
+        <p class="mt-3 result">Revolution: <span id="revolutionResult">0</span></p>
+    </div>
+
+    <!-- Stitch Length Calculator Section -->
+    <div id="stitchLengthCalculator" class="calculator-section d-none">
+        <h2>Stitch Length Calculator</h2>
+      <div class="mb-3">
+		<label for="wesco2" class="form-label">Wesco</label>
+         <input type="number" class="form-control" id="wesco2" required>
+	  </div>
+	  <div class="mb-3">
+		<label for="stitch-length" class="form-label">Stitch Length</label>
+         <input type="number" class="form-control" id="stitch-length" required>
+	  </div>
+	  <button class="btn btn-custom" onclick="calculateStitchLength()">Calculate Stitch Length</button>
+        <p class="mt-3 result">Stitch Length Result: <span id="stitchLengthResult">0</span></p>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    Developed by © Mahmudul Haque
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Show Revolution Calculator
+    function showRevolutionCalculator() {
+        document.getElementById('revolutionCalculator').classList.remove('d-none');
+        document.getElementById('stitchLengthCalculator').classList.add('d-none');
+    }
+
+    // Show Stitch Length Calculator
+    function showStitchLengthCalculator() {
+        document.getElementById('stitchLengthCalculator').classList.remove('d-none');
+        document.getElementById('revolutionCalculator').classList.add('d-none');
+    }
+
+    // Handle dropdown selection for machine type
+    document.getElementById("machineType").addEventListener("change", function () {
+        var selectedValue = this.value;
+        var wescoInput = document.getElementById("wescoInput");
+        var needleStitchInput = document.getElementById("needleStitchInput");
+
+        wescoInput.classList.add('d-none');
+        needleStitchInput.classList.add('d-none');
+
+        if (selectedValue === "wesco") {
+            wescoInput.classList.remove('d-none');
+        } else if (selectedValue === "other") {
+            needleStitchInput.classList.remove('d-none');
+        }
+    });
+
+    // Function to calculate revolution
+    function calculateRevolution() {
+        const machineType = document.getElementById('machineType').value;
+        const kg = parseFloat(document.getElementById('kg').value);
+        const count = parseFloat(document.getElementById('count').value);
+        const feeder = parseFloat(document.getElementById('feeder').value);
+
+        let revolutionResult = 0;
+
+        if (machineType === "wesco") {
+            const wesco = parseFloat(document.getElementById('wesco').value);
+            if (!wesco || wesco <= 0 || kg <0 || !kg || count <0 || !count || !feeder || feeder <0) {
+                alert('Plase enter valid value');
+                return;
+            }
+            // Custom calculation for Wesco
+            revolutionResult = (kg * count * 169368) / (wesco * feeder);
+        } else if (machineType === "other") {
+            const needle = parseFloat(document.getElementById('needle').value);
+            const stitch = parseFloat(document.getElementById('stitch').value);
+            if (!needle || !stitch || needle <= 0 || stitch <= 0) {
+                alert('Please provide valid Needle and Stitch Length values.');
+                return;
+            }
+            // Custom calculation for other machines
+            revolutionResult = (kg * count * 169368) / (needle * stitch * feeder);
+        } else {
+            alert('Please select a machine type.');
+            return;
+        }
+
+        document.getElementById('revolutionResult').innerText = revolutionResult.toFixed(2);
+    }
+	function calculateStitchLength() {
+	const wesco = parseFloat(document.getElementById('wesco2').value);
+	const needleNumber = parseFloat(document.getElementById('stitch-length').value);
+	
+	let titchLengthResult = 0;
+	if (!wesco || !needleNumber || needle<0 || needleNumber<0) {
+	alert("Please enter valid value")
+	} else {
+	stitchLengthResult = wesco / needleNumber
+	}
+	document.getElementById('stitchLengthResult').innerText = stitchLengthResult.toFixed(4)
+	}
+</script>
+
+</body>
+</html>
